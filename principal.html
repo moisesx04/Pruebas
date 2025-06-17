@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LibraryPro ITSC</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <style>
+      /* Variables CSS */
+      :root {
+        --primary-color: #d90000;
+        --primary-dark: #a30000;
+        --secondary-color: #6c757d;
+        --secondary-dark: #5a6268;
+        --background-start: #f8f9fa;
+        --background-end: #e9ecef;
+        --card-background: rgba(255, 255, 255, 0.85);
+        --card-hover-background: rgba(255, 255, 255, 0.98);
+        --text-color: #343a40;
+        --white-color: #fff;
+        --border-color: rgba(0, 0, 0, 0.08);
+        --border-hover: rgba(217, 0, 0, 0.3);
+        --shadow-light: 0 8px 16px rgba(0, 0, 0, 0.08);
+        --shadow-medium: 0 12px 28px rgba(0, 0, 0, 0.12);
+        --shadow-strong: 0 18px 35px rgba(0, 0, 0, 0.2);
+        --border-radius-s: 8px;
+        --border-radius-m: 15px;
+        --border-radius-l: 25px;
+        --font-family: "Inter", sans-serif;
+        --transition-speed: 0.3s;
+      }
+
+      /* Estilos generales */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-family);
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          var(--background-start),
+          var(--background-end)
+        );
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        color: var(--text-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Animaciones */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Contenedor principal */
+      .container {
+        width: 100%;
+        max-width: 1100px;
+        animation: fadeIn 0.8s ease-out forwards;
+      }
+
+      header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 40px;
+        width: 100%;
+      }
+
+      /* Menú Logout */
+      .logout-menu {
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        padding: 10px 15px;
+        border-radius: var(--border-radius-s);
+        background: var(--card-background);
+        box-shadow: var(--shadow-light);
+        transition: background var(--transition-speed) ease,
+          box-shadow var(--transition-speed) ease;
+        backdrop-filter: blur(4px); /* Efecto vidrio */
+      }
+
+      .logout-menu:hover {
+        background: var(--card-hover-background);
+        box-shadow: var(--shadow-medium);
+      }
+
+      .logout-menu > span {
+        font-weight: 600;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .logout-dropdown {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 10px);
+        background: var(--white-color);
+        border-radius: var(--border-radius-s);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(10px);
+        visibility: hidden;
+        transition: opacity var(--transition-speed) ease,
+          transform var(--transition-speed) ease,
+          visibility var(--transition-speed) ease;
+      }
+
+      .logout-dropdown.show {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+      }
+
+      .logout-dropdown button {
+        padding: 12px 20px;
+        border: none;
+        background: var(--primary-color);
+        color: var(--white-color);
+        font-weight: 600;
+        width: 180px;
+        cursor: pointer;
+        transition: background-color var(--transition-speed) ease;
+        display: block;
+      }
+
+      .logout-dropdown button:hover {
+        background: var(--primary-dark);
+      }
+
+      /* Logo */
+      .logo-center {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 50px;
+        animation: slideInUp 0.8s ease-out 0.2s forwards;
+        opacity: 0;
+      }
+
+      .logo-center img {
+        width: 160px;
+        height: 160px;
+        border-radius: var(--border-radius-l);
+        object-fit: contain;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Título */
+      h1 {
+        font-size: 40px;
+        color: var(--primary-color);
+        margin-bottom: 50px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        text-shadow: 1px 1px 5px rgba(217, 0, 0, 0.15);
+        animation: slideInUp 0.8s ease-out 0.4s forwards;
+        opacity: 0;
+        text-align: center;
+      }
+
+      /* Sección principal (Tarjetas) */
+      main {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        justify-content: center;
+        width: 100%;
+        animation: fadeIn 1s ease-out 0.6s forwards;
+        opacity: 0;
+      }
+
+      .card {
+        background: var(--card-background);
+        padding: 30px;
+        border-radius: var(--border-radius-m);
+        box-shadow: var(--shadow-medium);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        transition: transform var(--transition-speed) ease,
+          box-shadow var(--transition-speed) ease,
+          border-color var(--transition-speed) ease,
+          background var(--transition-speed) ease;
+        cursor: pointer;
+        user-select: none;
+        color: inherit;
+        text-decoration: none;
+        border: 1px solid transparent;
+        backdrop-filter: blur(4px); /* Efecto vidrio */
+      }
+
+      .card:hover {
+        background: var(--card-hover-background);
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-strong);
+        border-color: var(--border-hover);
+      }
+
+      .card svg {
+        stroke: var(--primary-color);
+        width: 48px;
+        height: 48px;
+        transition: stroke var(--transition-speed) ease,
+          transform var(--transition-speed) ease;
+      }
+
+      .card:hover svg {
+        stroke: var(--primary-dark);
+        transform: scale(1.1);
+      }
+
+      .card span {
+        font-size: 19px;
+        font-weight: 600;
+        color: #444;
+        text-align: center;
+      }
+
+      /* Modales personalizados (para que no se rompan tus estilos existentes) */
+      /* Ajuste el modal de Bootstrap para que se parezca a tu estilo */
+      .modal-dialog {
+        max-width: 700px;
+        width: 90%;
+        margin: auto; /* Centrar el diálogo */
+        display: flex;
+        align-items: center; /* Alineación vertical */
+        min-height: calc(
+          100vh - 1rem
+        ); /* Asegurar que ocupe casi toda la altura */
+      }
+
+      .modal-content {
+        background: var(--white-color);
+        padding: 35px;
+        border-radius: var(--border-radius-m);
+        box-shadow: var(--shadow-strong);
+        position: relative;
+        max-height: 90vh; /* Restringir altura */
+        overflow-y: auto; /* Habilitar scroll */
+        /* Eliminamos las transiciones de scale y opacity aquí, Bootstrap las maneja */
+      }
+
+      /* Scrollbar personalizado para modales (Webkit) */
+      .modal-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      .modal-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      .modal-content::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+      }
+      .modal-content::-webkit-scrollbar-thumb:hover {
+        background: #aaa;
+      }
+
+      .modal-header {
+        border-bottom: 2px solid #eee; /* Mantener tu borde inferior */
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #eee; /* Mantener tu borde inferior */
+      }
+
+      .modal-header .modal-title {
+        color: var(--primary-color);
+        font-size: 26px;
+        font-weight: 700;
+      }
+
+      .modal-body {
+        padding: 0; /* Para que los inputs y tablas no tengan padding extra */
+      }
+
+      .modal-content input {
+        width: 100%;
+        padding: 14px;
+        margin-bottom: 18px;
+        border: 1.5px solid #ddd;
+        border-radius: var(--border-radius-s);
+        font-size: 16px;
+        transition: border-color var(--transition-speed) ease,
+          box-shadow var(--transition-speed) ease;
+        outline: none;
+      }
+
+      .modal-content input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(217, 0, 0, 0.2);
+      }
+
+      .modal-footer {
+        border-top: none; /* Eliminar el borde superior de Bootstrap */
+        padding-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 0; /* Bootstrap ya maneja el espacio */
+      }
+
+      .modal-footer button {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        color: var(--white-color);
+        padding: 12px 25px;
+        border: none;
+        border-radius: var(--border-radius-s);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background var(--transition-speed) ease,
+          transform var(--transition-speed) ease,
+          box-shadow var(--transition-speed) ease;
+        box-shadow: 0 4px 10px rgba(217, 0, 0, 0.3);
+      }
+
+      .modal-footer button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(163, 0, 0, 0.4);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color),
+          var(--secondary-dark)
+        );
+        box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+      }
+
+      .btn-secondary:hover {
+        background: linear-gradient(135deg, var(--secondary-dark), #495057);
+        box-shadow: 0 6px 15px rgba(90, 98, 104, 0.4);
+      }
+
+      /* Tabla */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white-color);
+        border-radius: var(--border-radius-s);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 0; /* Removido para que el modal-body maneje el padding */
+      }
+
+      th,
+      td {
+        padding: 15px 18px;
+        border-bottom: 1px solid #e9ecef;
+        text-align: left;
+      }
+
+      th {
+        background: var(--primary-color);
+        color: var(--white-color);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tbody tr:hover {
+        background-color: #e9ecef;
+      }
+
+      /* Modal Alerta Personalizado (adaptado a Bootstrap) */
+      #customAlertModal .modal-dialog {
+        max-width: 450px; /* Tamaño más pequeño para alertas */
+      }
+
+      #customAlertModal .modal-content {
+        padding: 30px;
+        text-align: center;
+      }
+
+      #customAlertModal .modal-header {
+        border-bottom: none;
+        justify-content: center; /* Centrar el título de alerta */
+        padding-bottom: 0;
+        margin-bottom: 15px;
+      }
+
+      #customAlertModal .modal-header .modal-title {
+        font-size: 24px;
+      }
+
+      #customAlertModal .modal-body {
+        font-size: 18px;
+        margin-bottom: 30px;
+        color: #555;
+        line-height: 1.5;
+        padding: 0;
+      }
+
+      #customAlertModal .modal-footer {
+        justify-content: center; /* Centrar el botón OK */
+        padding-top: 0;
+      }
+
+      #customAlertModal button {
+        margin: 0 auto;
+        display: block;
+      }
+
+      /* Media Queries (Ajustes menores) */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 34px;
+        }
+        main {
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 25px;
+        }
+        .card {
+          padding: 25px;
+        }
+        .modal-content {
+          padding: 30px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 20px 15px;
+        }
+        h1 {
+          font-size: 28px;
+          margin-bottom: 35px;
+        }
+        .logo-center img {
+          width: 120px;
+          height: 120px;
+        }
+        main {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        header {
+          margin-bottom: 30px;
+        }
+        .logout-menu {
+          padding: 8px 12px;
+        }
+        .modal-content {
+          padding: 20px;
+          width: 95%;
+        }
+        .modal-content h2 {
+          font-size: 22px;
+        }
+        .modal-content input {
+          padding: 12px;
+          font-size: 15px;
+        }
+        .modal-content button {
+          padding: 10px 18px;
+          font-size: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logout-menu" id="logoutMenuTrigger">
+          <span id="nombreUsuarioSpan">
+            <i data-lucide="user"></i>
+            <span id="nombreUsuarioText">Usuario</span>
+          </span>
+          <div class="logout-dropdown" id="logoutDropdown">
+            <button id="logoutBtn" type="button">Cerrar sesión</button>
+          </div>
+        </div>
+      </header>
+
+      <div class="logo-center">
+        <img src="../img/logo.png" alt="Logo ITSC" class="logo" />
+      </div>
+
+      <h1>LibraryPro ITSC</h1>
+
+      <main>
+        <a href="registro_estudiantes.html" class="card">
+          <i data-lucide="user-plus"></i>
+          <span>Registro Estudiantes</span>
+        </a>
+        <a href="consulta_estudiantes.html" class="card">
+          <i data-lucide="search"></i>
+          <span>Consulta Estudiantes</span>
+        </a>
+        <div class="card" id="btnConsultaRegistro" role="button" tabindex="0">
+          <i data-lucide="file-text"></i>
+          <span>Consulta Registro</span>
+        </div>
+        <a href="reporte.html" class="card">
+          <i data-lucide="bar-chart"></i>
+          <span>Reporte</span>
+        </a>
+      </main>
+    </div>
+
+    <div
+      class="modal fade"
+      id="modalVerEstudiantes"
+      tabindex="-1"
+      aria-labelledby="modalVerEstudiantesLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalVerEstudiantesLabel">
+              Estudiantes Registrados
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Matrícula</th>
+                    <th>Nombre</th>
+                    <th>Carrera</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaEstudiantesModal"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="btnAbrirFormRegistro"
+            >
+              Nuevo Estudiante
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="modalRegistroEstudiante"
+      tabindex="-1"
+      aria-labelledby="modalRegistroEstudianteLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="modalRegistroEstudianteLabel">
+              Registrar Estudiante
+            </h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formRegistroEstudiante">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="matricula"
+                  placeholder="Matrícula"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  placeholder="Nombre"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="carrera"
+                  placeholder="Carrera"
+                  required
+                />
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="customAlertModal"
+      tabindex="-1"
+      aria-labelledby="customAlertModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="customAlertModalLabel">Mensaje</h2>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p id="alertMessage">Este es un mensaje de alerta.</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      "use strict";
+
+      const API_BASE_URL = "http://127.0.0.1:5000/api/students";
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- Almacenar elementos del DOM ---
+        const els = {
+          nombreUsuarioText: document.getElementById("nombreUsuarioText"),
+          logoutMenuTrigger: document.getElementById("logoutMenuTrigger"),
+          logoutDropdown: document.getElementById("logoutDropdown"),
+          logoutBtn: document.getElementById("logoutBtn"),
+          btnConsultaRegistro: document.getElementById("btnConsultaRegistro"),
+          btnAbrirFormRegistro: document.getElementById("btnAbrirFormRegistro"),
+          formRegistro: document.getElementById("formRegistroEstudiante"),
+          tablaEstudiantesModal: document.getElementById(
+            "tablaEstudiantesModal"
+          ),
+          alertTitle: document.getElementById("customAlertModalLabel"), // Título del modal de alerta de Bootstrap
+          alertMessage: document.getElementById("alertMessage"),
+          matriculaInput: document.getElementById("matricula"),
+          nombreInput: document.getElementById("nombre"),
+          carreraInput: document.getElementById("carrera"),
+        };
+
+        // --- Instancias de Modales de Bootstrap ---
+        const modalVerEstudiantes = new bootstrap.Modal(
+          document.getElementById("modalVerEstudiantes")
+        );
+        const modalRegistroEstudiante = new bootstrap.Modal(
+          document.getElementById("modalRegistroEstudiante")
+        );
+        const customAlertModal = new bootstrap.Modal(
+          document.getElementById("customAlertModal")
+        );
+
+        // --- Verificación de seguridad ---
+        const checkAuth = () => {
+          const usuario = sessionStorage.getItem("usuario");
+          if (!usuario) {
+            location.replace("login.html");
+            return false;
+          }
+          els.nombreUsuarioText.textContent = usuario;
+          return true;
+        };
+
+        if (!checkAuth()) {
+          return;
+        }
+
+        // --- Inicializar iconos de Lucide ---
+        const initializeLucide = () => {
+          if (window.lucide) {
+            lucide.createIcons();
+          } else {
+            setTimeout(initializeLucide, 50);
+          }
+        };
+        initializeLucide();
+
+        // --- Funcionalidad de Cerrar Sesión ---
+        const initLogout = () => {
+          els.logoutBtn.addEventListener("click", () => {
+            sessionStorage.clear();
+            location.replace("login.html");
+          });
+
+          els.logoutMenuTrigger.addEventListener("click", (event) => {
+            event.stopPropagation();
+            els.logoutDropdown.classList.toggle("show");
+          });
+
+          window.addEventListener("click", (event) => {
+            if (
+              !els.logoutMenuTrigger.contains(event.target) &&
+              els.logoutDropdown.classList.contains("show")
+            ) {
+              els.logoutDropdown.classList.remove("show");
+            }
+          });
+        };
+        initLogout();
+
+        // --- Modal de Alerta Personalizado (usando Bootstrap) ---
+        const showAlert = (message, title = "Mensaje") => {
+          els.alertTitle.textContent = title;
+          els.alertMessage.textContent = message;
+          customAlertModal.show(); // Usar el método show() de Bootstrap
+        };
+
+        // --- Gestión de Datos de Estudiantes (Interacción con el Backend de Python) ---
+        const getEstudiantes = async () => {
+          try {
+            const response = await fetch(API_BASE_URL);
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(
+                `HTTP error! status: ${response.status} - ${
+                  errorData.message || response.statusText
+                }`
+              );
+            }
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error("Error al obtener estudiantes:", error);
+            showAlert(
+              `No pudimos cargar los estudiantes: ${error.message}`,
+              "Error de Conexión"
+            );
+            return [];
+          }
+        };
+
+        const saveEstudiante = async (studentData) => {
+          try {
+            const response = await fetch(API_BASE_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(studentData),
+            });
+
+            const responseData = await response.json();
+
+            if (!response.ok) {
+              let errorMessage =
+                responseData.message || "Error desconocido al guardar.";
+              if (response.status === 409) {
+                errorMessage = "Esta matrícula ya está registrada.";
+              }
+              throw new Error(errorMessage);
+            }
+
+            return { success: true, message: responseData.message };
+          } catch (error) {
+            console.error("Error al guardar estudiante:", error);
+            return { success: false, message: error.message };
+          }
+        };
+
+        const cargarEstudiantesEnTabla = async () => {
+          const estudiantes = await getEstudiantes();
+          els.tablaEstudiantesModal.innerHTML = "";
+          if (estudiantes.length === 0) {
+            els.tablaEstudiantesModal.innerHTML = `<tr><td colspan="3" class="text-center text-muted">No hay estudiantes registrados.</td></tr>`;
+          } else {
+            estudiantes.forEach(({ matricula, nombre, carrera }) => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `<td>${matricula}</td><td>${nombre}</td><td>${carrera}</td>`;
+              els.tablaEstudiantesModal.appendChild(tr);
+            });
+          }
+        };
+
+        // --- Inicializar Modales y Manejadores ---
+        const initModals = () => {
+          els.btnConsultaRegistro.addEventListener("click", () => {
+            cargarEstudiantesEnTabla();
+            modalVerEstudiantes.show(); // Abrir modal usando Bootstrap
+          });
+
+          els.btnAbrirFormRegistro.addEventListener("click", () => {
+            modalVerEstudiantes.hide(); // Cerrar modal "ver" usando Bootstrap
+            els.formRegistro.reset();
+            modalRegistroEstudiante.show(); // Abrir modal "registro" usando Bootstrap
+          });
+        };
+        initModals();
+
+        // --- Envío del formulario de registro de estudiantes ---
+        const initStudentForm = () => {
+          els.formRegistro.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const matricula = els.matriculaInput.value.trim();
+            const nombre = els.nombreInput.value.trim();
+            const carrera = els.carreraInput.value.trim();
+
+            if (!matricula || !nombre || !carrera) {
+              showAlert(
+                "Por favor, completa todos los campos.",
+                "Campos incompletos"
+              );
+              return;
+            }
+
+            const result = await saveEstudiante({ matricula, nombre, carrera });
+
+            if (result.success) {
+              showAlert(result.message, "Éxito");
+              els.formRegistro.reset();
+              modalRegistroEstudiante.hide(); // Cerrar modal de registro usando Bootstrap
+              cargarEstudiantesEnTabla(); // Actualizar la tabla
+            } else {
+              showAlert(result.message, "Error al Guardar");
+            }
+          });
+        };
+        initStudentForm();
+      });
+    </script>
+  </body>
+</html>

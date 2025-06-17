@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulta de Estudiantes - LibraryPro ITSC</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      /* Variables CSS */
+      :root {
+        --primary-color: #d90000;
+        --primary-dark: #a30000;
+        --text-color: #343a40;
+        --white-color: #fff;
+        --shadow-light: 0 8px 16px rgba(0, 0, 0, 0.08);
+        --shadow-medium: 0 12px 28px rgba(0, 0, 0, 0.12);
+        --shadow-strong: 0 18px 35px rgba(0, 0, 0, 0.2);
+        --border-radius-s: 8px;
+        --border-radius-m: 15px;
+        --border-radius-l: 25px;
+        --font-family: "Inter", sans-serif;
+        --transition-speed: 0.3s;
+      }
+
+      /* Estilos generales */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-family);
+      }
+
+      body {
+        background-image: url("https://picsum.photos/1920/1080?random=4");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        color: var(--text-color);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        overflow-x: hidden;
+        position: relative;
+        background-attachment: fixed; /* Fixed background for better scroll experience */
+      }
+
+      /* Overlay para mejorar legibilidad del texto */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.6); /* Ligeramente más opaco */
+        z-index: -1;
+      }
+
+      /* Animaciones */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      h1 {
+        font-size: 42px; /* Título más grande */
+        color: var(--primary-color); /* Rojo más intenso */
+        margin-bottom: 50px; /* Más espacio debajo del título */
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-shadow: 2px 3px 8px rgba(217, 0, 0, 0.3); /* Sombra más definida */
+        animation: slideInUp 0.9s ease-out 0.2s forwards;
+        opacity: 0;
+        text-align: center;
+      }
+
+      .card-modern {
+        background: rgba(255, 255, 255, 0.98); /* Fondo casi opaco */
+        padding: 40px; /* Más padding */
+        border-radius: 20px; /* Bordes aún más redondeados */
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Sombra más suave y extendida */
+        width: 100%;
+        max-width: 800px; /* Ancho máximo mayor */
+        margin-bottom: 30px;
+        animation: fadeIn 1s ease-out 0.4s forwards;
+        opacity: 0;
+        border: none; /* Eliminar el borde predeterminado de Bootstrap */
+      }
+
+      label {
+        font-weight: 700; /* Más negrita */
+        margin-bottom: 12px; /* Más espacio debajo de la etiqueta */
+        color: #444; /* Color de texto más oscuro */
+        font-size: 18px;
+      }
+
+      .form-control-custom {
+        padding: 16px 20px; /* Más padding */
+        border: 2px solid #e5e5e5; /* Borde más visible */
+        border-radius: 12px; /* Bordes más redondeados */
+        font-size: 17px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        outline: none;
+        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.07); /* Sombra interna más pronunciada */
+        background: #ffffff;
+        color: #333;
+      }
+
+      .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(217, 0, 0, 0.2); /* Sombra de foco más pronunciada */
+        background: #fffafa;
+      }
+
+      select.form-control-custom {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2C197.4L159.3%2C69.7c-3.1-3.1-8.2-3.1-11.3%2C0L5.4%2C197.4c-3.1%2C3.1-3.1%2C8.2%2C0%2C11.3l11.3%2C11.3c3.1%2C3.1%2C8.2%2C3.1%2C11.3%2C0l120.3-120.3c3.1-3.1%2C8.2-3.1%2C11.3%2C0l120.3%2C120.3c3.1%2C3.1%2C8.2%2C3.1%2C11.3%2C0l11.3-11.3C290.1%2C205.6%2C290.1%2C200.5%2C287%2C197.4z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 20px center; /* Posición de flecha más a la derecha */
+        background-size: 14px; /* Flecha ligeramente más grande */
+      }
+
+      .btn-modern {
+        margin-top: 30px; /* Más espacio sobre el botón */
+        padding: 16px 32px; /* Más padding */
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        ); /* Degradado más pronunciado */
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700; /* Más negrita */
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease,
+          box-shadow 0.3s ease;
+        box-shadow: 0 6px 15px rgba(217, 0, 0, 0.4); /* Sombra más intensa */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px; /* Más espacio entre icono y texto */
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-modern:hover {
+        background: linear-gradient(135deg, var(--primary-dark), #8c0000);
+        transform: translateY(-3px); /* Desplazamiento más notorio */
+        box-shadow: 0 8px 20px rgba(217, 0, 0, 0.5); /* Sombra más grande al hover */
+      }
+
+      .student-data {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 12px;
+        background-color: #fefefe; /* Fondo más blanco */
+        border: 1px solid #ddd;
+        color: #444;
+        font-size: 17px;
+        line-height: 1.7;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+      }
+
+      .student-data p {
+        margin-bottom: 10px;
+      }
+
+      .student-data strong {
+        color: var(--primary-color); /* Rojo principal */
+        font-weight: 700;
+      }
+
+      /* Estilos para el modal de alerta de Bootstrap */
+      #customAlertModal .modal-content {
+        background: var(--white-color);
+        padding: 30px 40px;
+        border-radius: var(--border-radius-m);
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 12px 25px rgba(217, 0, 0, 0.3); /* Sombra del modal */
+        border: none; /* Eliminar borde por defecto de Bootstrap */
+      }
+
+      #customAlertModal .modal-header {
+        border-bottom: none;
+        padding: 0;
+        margin-bottom: 20px;
+        justify-content: center;
+      }
+
+      #customAlertModal .modal-title {
+        font-size: 24px;
+        color: var(--primary-color);
+        font-weight: 700;
+      }
+
+      #customAlertModal .modal-body {
+        padding: 0;
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        font-weight: 700;
+      }
+
+      #customAlertModal .modal-footer {
+        border-top: none;
+        padding: 0;
+        justify-content: center;
+      }
+
+      #customAlertModal .btn-primary {
+        background: var(--primary-color);
+        color: var(--white-color);
+        padding: 12px 30px;
+        border: none;
+        border-radius: var(--border-radius-m);
+        font-weight: 700;
+        transition: background 0.3s ease;
+        font-size: 16px;
+        text-transform: uppercase;
+      }
+
+      #customAlertModal .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 32px;
+          margin-bottom: 40px;
+        }
+
+        .card-modern {
+          padding: 25px 20px;
+        }
+
+        .btn-modern {
+          font-size: 16px;
+          padding: 14px 28px;
+        }
+
+        #customAlertModal .modal-content {
+          padding: 20px 25px;
+        }
+
+        #customAlertModal .modal-title {
+          font-size: 20px;
+        }
+
+        #customAlertModal .modal-body {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container d-flex flex-column align-items-center">
+      <h1 class="mt-5 mb-5 text-center">
+        Consulta de Estudiantes - LibraryPro ITSC
+      </h1>
+
+      <div class="card card-modern mb-4">
+        <div class="mb-3">
+          <label for="matricula" class="form-label">Matrícula</label>
+          <input
+            type="text"
+            class="form-control form-control-custom"
+            id="matricula"
+            placeholder="Ejemplo: 123456"
+            maxlength="10"
+          />
+        </div>
+
+        <div class="mb-3" id="motivoVisita">
+          <label for="motivo" class="form-label">Motivo de visita</label>
+          <select class="form-select form-control-custom" id="motivo">
+            <option value="">-- Seleccione un motivo --</option>
+            <option value="olvido_contraseña">Olvidé mi contraseña</option>
+            <option value="consulta_registro">Consulta de registro</option>
+            <option value="prorroga">Prórroga</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+
+        <button id="buscarBtn" class="btn btn-modern w-100">
+          <i data-lucide="search"></i> Buscar
+        </button>
+      </div>
+
+      <div
+        class="card card-modern results"
+        id="resultado"
+        style="display: none"
+      >
+        <div class="student-data" id="datosEstudiante"></div>
+      </div>
+    </div>
+
+    <div
+      class="modal fade"
+      id="customAlertModal"
+      tabindex="-1"
+      aria-labelledby="customAlertModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="customAlertModalLabel">Mensaje</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p id="alertMessage">Mensaje de alerta</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      // Inicializar iconos lucide
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.replace();
+      });
+
+      const buscarBtn = document.getElementById("buscarBtn");
+      const matriculaInput = document.getElementById("matricula");
+      const resultadoDiv = document.getElementById("resultado");
+      const datosEstudianteDiv = document.getElementById("datosEstudiante");
+      const motivoSelect = document.getElementById("motivo");
+
+      // Instancia del modal de alerta de Bootstrap
+      const customAlertModal = new bootstrap.Modal(
+        document.getElementById("customAlertModal")
+      );
+      const alertMessage = document.getElementById("alertMessage");
+      const customAlertModalLabel = document.getElementById(
+        "customAlertModalLabel"
+      );
+
+      // Simulación de base de datos
+      const estudiantesDB = {
+        123456: {
+          nombre: "Juan Pérez",
+          carrera: "Administración Turística y Hotelera",
+          semestre: "5to Cuatrimestre",
+          email: "juan.perez@itsc.edu.mx",
+          telefono: "55-1234-5678",
+        },
+        654321: {
+          nombre: "María López",
+          carrera: "Ingeniería en Sistemas",
+          semestre: "7mo Cuatrimestre",
+          email: "maria.lopez@itsc.edu.mx",
+          telefono: "55-8765-4321",
+        },
+      };
+
+      function mostrarModal(mensaje, titulo = "Mensaje") {
+        customAlertModalLabel.textContent = titulo;
+        alertMessage.textContent = mensaje;
+        customAlertModal.show(); // Mostrar el modal usando la instancia de Bootstrap
+      }
+
+      buscarBtn.addEventListener("click", () => {
+        const matricula = matriculaInput.value.trim();
+        const motivo = motivoSelect.value;
+
+        if (matricula === "") {
+          mostrarModal(
+            "Por favor, ingrese una matrícula válida.",
+            "Campo Vacío"
+          );
+          return;
+        }
+
+        if (motivo === "") {
+          mostrarModal(
+            "Por favor, seleccione un motivo de visita.",
+            "Campo Vacío"
+          );
+          return;
+        }
+
+        const estudiante = estudiantesDB[matricula];
+        if (estudiante) {
+          resultadoDiv.style.display = "block";
+          datosEstudianteDiv.innerHTML = `
+            <p><strong>Nombre:</strong> ${estudiante.nombre}</p>
+            <p><strong>Carrera:</strong> ${estudiante.carrera}</p>
+            <p><strong>Semestre:</strong> ${estudiante.semestre}</p>
+            <p><strong>Email:</strong> ${estudiante.email}</p>
+            <p><strong>Teléfono:</strong> ${estudiante.telefono}</p>
+            <p><strong>Motivo de visita:</strong> ${
+              motivoSelect.options[motivoSelect.selectedIndex].text
+            }</p>
+          `;
+        } else {
+          resultadoDiv.style.display = "none";
+          mostrarModal(
+            "No se encontró estudiante con esa matrícula.",
+            "Estudiante No Encontrado"
+          );
+        }
+      });
+    </script>
+  </body>
+</html>

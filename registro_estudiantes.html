@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Estudiantes - LibraryPro ITSC</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+      /* Estilos generales */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-image: url("https://picsum.photos/1920/1080?random=3"); /* URL de imagen de fondo de ejemplo. ¡Cambia esto por tu imagen real! */
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        color: #333; /* Color de texto general más suave */
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        overflow-x: hidden; /* Evita desbordamiento horizontal */
+        position: relative; /* Necesario para el modal de alerta */
+      }
+
+      /* Animaciones */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideInUp {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .container {
+        background: rgba(
+          255,
+          255,
+          255,
+          0.95
+        ); /* Fondo ligeramente transparente */
+        padding: 40px; /* Más padding */
+        border-radius: 20px; /* Bordes más redondeados */
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+        width: 100%;
+        max-width: 900px; /* Ancho máximo para el contenedor */
+        animation: fadeIn 0.8s ease-out forwards;
+      }
+
+      h1 {
+        font-size: 38px; /* Título principal más grande */
+        color: #cc0000; /* Rojo principal */
+        margin-bottom: 40px; /* Más espacio debajo del título */
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        text-shadow: 1px 2px 6px rgba(217, 0, 0, 0.2);
+        animation: slideInUp 0.8s ease-out 0.2s forwards;
+        opacity: 0;
+        text-align: center; /* Centrar el título */
+      }
+
+      .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 5px;
+      }
+
+      .form-control {
+        padding: 12px 15px; /* Más padding */
+        border: 1.5px solid #e0e0e0; /* Borde más sutil */
+        border-radius: 10px; /* Bordes más redondeados */
+        font-size: 16px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-control:focus {
+        border-color: #d90000;
+        box-shadow: 0 0 0 3px rgba(217, 0, 0, 0.15);
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.2s ease,
+          box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #d90000, #b80000);
+        border-color: #d90000;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #a30000, #8c0000);
+        border-color: #a30000;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(217, 0, 0, 0.4);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border-color: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: linear-gradient(135deg, #c82333, #bd2130);
+        border-color: #bd2130;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(220, 53, 69, 0.4);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #28a745, #218838);
+        border-color: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: linear-gradient(135deg, #218838, #1e7e34);
+        border-color: #1e7e34;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #6c757d, #5a6268);
+        border-color: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: linear-gradient(135deg, #5a6268, #4e555b);
+        border-color: #4e555b;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(108, 117, 125, 0.4);
+      }
+
+      table {
+        margin-top: 30px; /* Más espacio sobre la tabla */
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 12px; /* Bordes redondeados para la tabla */
+        overflow: hidden; /* Asegura que el border-radius se aplique */
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 15px 20px; /* Más padding en celdas */
+        border-bottom: 1px solid #f0f0f0; /* Borde más claro */
+        text-align: left;
+        font-size: 15px;
+        color: #444;
+      }
+
+      th {
+        background: #d90000; /* Rojo principal para el encabezado */
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+
+      tr:last-child td {
+        border-bottom: none; /* Elimina el borde inferior de la última fila */
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f8f8f8; /* Color de fila par para mejor legibilidad */
+      }
+
+      #totalEstudiantes {
+        font-size: 1.2rem; /* Tamaño de fuente ligeramente mayor */
+        margin-top: 25px; /* Más espacio */
+        font-weight: 700;
+        color: #d90000; /* Color principal para el total */
+        text-align: end;
+        padding-right: 10px; /* Pequeño padding para alinear con la tabla */
+      }
+
+      /* Estilos para el modal de alerta personalizado */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 2000; /* Asegura que esté por encima de todo */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .modal.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .modal-content {
+        background: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        text-align: center;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: slideInUp 0.4s ease-out forwards;
+      }
+
+      .modal.active .modal-content {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      #customAlertModal h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #d90000;
+        font-weight: 700;
+      }
+
+      #customAlertModal p {
+        font-size: 18px;
+        margin-bottom: 25px;
+        color: #555;
+      }
+
+      #customAlertModal button {
+        background: linear-gradient(135deg, #d90000, #b80000);
+        color: white;
+        padding: 10px 30px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 10px rgba(217, 0, 0, 0.3);
+      }
+
+      #customAlertModal button:hover {
+        background: linear-gradient(135deg, #a30000, #8c0000);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(163, 0, 0, 0.4);
+      }
+
+      @media print {
+        .no-print {
+          display: none;
+        }
+        body {
+          background-image: none; /* Eliminar fondo en la impresión */
+          padding: 0;
+          align-items: flex-start;
+        }
+        .container {
+          box-shadow: none;
+          border-radius: 0;
+          padding: 20px;
+          max-width: none;
+        }
+        h1 {
+          margin-bottom: 20px;
+          font-size: 28px;
+          text-align: left;
+        }
+        table {
+          box-shadow: none;
+          border-radius: 0;
+          margin-top: 10px;
+        }
+        th,
+        td {
+          padding: 10px 15px;
+          font-size: 13px;
+        }
+        #totalEstudiantes {
+          font-size: 1rem;
+          margin-top: 15px;
+          text-align: left;
+        }
+      }
+
+      /* Media Queries para responsividad */
+      @media (max-width: 768px) {
+        .container {
+          padding: 30px;
+        }
+        h1 {
+          font-size: 32px;
+          margin-bottom: 30px;
+        }
+        .row.no-print > div {
+          margin-bottom: 15px; /* Espacio entre elementos de filtro/botón */
+        }
+        .row.no-print .col-md-3,
+        .row.no-print .col-md-6 {
+          flex-basis: 100%; /* Ocupar todo el ancho */
+          max-width: 100%;
+        }
+        .row.no-print .d-flex.align-items-end {
+          justify-content: center !important; /* Centrar botones */
+        }
+        .btn {
+          width: 100%; /* Botones de ancho completo */
+        }
+        th,
+        td {
+          padding: 12px 15px;
+          font-size: 14px;
+        }
+        #totalEstudiantes {
+          font-size: 1.1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 15px 10px;
+        }
+        .container {
+          padding: 20px;
+          border-radius: 15px;
+        }
+        h1 {
+          font-size: 26px;
+          margin-bottom: 25px;
+        }
+        .form-control {
+          padding: 10px 12px;
+          font-size: 14px;
+        }
+        .btn {
+          padding: 10px 20px;
+          font-size: 15px;
+        }
+        th,
+        td {
+          padding: 10px 12px;
+          font-size: 12px;
+        }
+        #totalEstudiantes {
+          font-size: 1rem;
+        }
+        #customAlertModal .modal-content {
+          padding: 20px;
+        }
+        #customAlertModal h2 {
+          font-size: 20px;
+        }
+        #customAlertModal p {
+          font-size: 16px;
+        }
+        #customAlertModal button {
+          font-size: 16px;
+          padding: 8px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Registro de Estudiantes</h1>
+    <div class="container">
+      <div class="row no-print mb-4 align-items-end">
+        <div class="col-md-3">
+          <label for="fechaInicio" class="form-label">Desde:</label>
+          <input type="date" id="fechaInicio" class="form-control" />
+        </div>
+        <div class="col-md-3">
+          <label for="fechaFin" class="form-label">Hasta:</label>
+          <input type="date" id="fechaFin" class="form-control" />
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary w-100" onclick="filtrarPorRango()">
+            Filtrar
+          </button>
+        </div>
+        <div class="col-md-3 d-flex align-items-end justify-content-end">
+          <button class="btn btn-danger w-100" onclick="window.print()">
+            <i
+              data-lucide="printer"
+              style="
+                width: 18px;
+                height: 18px;
+                vertical-align: middle;
+                margin-right: 5px;
+              "
+            ></i>
+            Imprimir
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>Fecha</th>
+              <th>Nombre</th>
+              <th>Matrícula</th>
+              <th>Motivo</th>
+              <th>Hora</th>
+            </tr>
+          </thead>
+          <tbody id="tablaRegistros"></tbody>
+        </table>
+      </div>
+
+      <div id="totalEstudiantes" class="text-end"></div>
+
+      <div class="row no-print mt-4">
+        <div class="col-md-6 d-flex justify-content-start">
+          <button class="btn btn-success w-100" onclick="descargarExcel()">
+            <i
+              data-lucide="download"
+              style="
+                width: 18px;
+                height: 18px;
+                vertical-align: middle;
+                margin-right: 5px;
+              "
+            ></i>
+            Descargar Excel
+          </button>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button class="btn btn-secondary w-100" onclick="descargarPDF()">
+            <i
+              data-lucide="file-text"
+              style="
+                width: 18px;
+                height: 18px;
+                vertical-align: middle;
+                margin-right: 5px;
+              "
+            ></i>
+            Descargar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="customAlertModal" class="modal">
+      <div class="modal-content">
+        <h2 id="alertTitle"></h2>
+        <p id="alertMessage"></p>
+        <button id="alertOkBtn">OK</button>
+      </div>
+    </div>
+
+    <script>
+      // Inicializa los iconos lucide al cargar la página
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+
+      const tablaRegistros = document.getElementById("tablaRegistros");
+      const totalEstudiantes = document.getElementById("totalEstudiantes");
+
+      // Funciones para mostrar/ocultar el modal de alerta personalizado
+      const customAlertModal = document.getElementById("customAlertModal");
+      const alertTitle = document.getElementById("alertTitle");
+      const alertMessage = document.getElementById("alertMessage");
+      const alertOkBtn = document.getElementById("alertOkBtn");
+
+      function showAlert(message, title = "Mensaje") {
+        alertTitle.textContent = title;
+        alertMessage.textContent = message;
+        customAlertModal.classList.add("active");
+      }
+
+      function hideAlert() {
+        customAlertModal.classList.remove("active");
+      }
+
+      alertOkBtn.onclick = hideAlert;
+
+      function cargarRegistros(rango = null) {
+        tablaRegistros.innerHTML = "";
+        totalEstudiantes.textContent = "";
+        let registros =
+          JSON.parse(localStorage.getItem("registrosEstudiantes")) || [];
+
+        registros.sort((a, b) => {
+          const fechaA = new Date(a.fecha + " " + a.hora);
+          const fechaB = new Date(b.fecha + " " + b.hora);
+          return fechaB - fechaA;
+        });
+
+        let filtrados = registros;
+
+        if (rango) {
+          filtrados = registros.filter((r) => {
+            const fechaRegistro = new Date(r.fecha);
+            // Ajustar las fechas de inicio y fin para incluir todo el día
+            const inicio = new Date(
+              rango.inicio.getFullYear(),
+              rango.inicio.getMonth(),
+              rango.inicio.getDate()
+            );
+            const fin = new Date(
+              rango.fin.getFullYear(),
+              rango.fin.getMonth(),
+              rango.fin.getDate(),
+              23,
+              59,
+              59,
+              999
+            );
+            return fechaRegistro >= inicio && fechaRegistro <= fin;
+          });
+        }
+
+        if (filtrados.length === 0) {
+          tablaRegistros.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">No hay registros disponibles para los filtros seleccionados.</td></tr>`;
+        } else {
+          filtrados.forEach((registro) => {
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+                        <td>${registro.fecha}</td>
+                        <td>${registro.nombre}</td>
+                        <td>${registro.matricula}</td>
+                        <td>${registro.motivo}</td>
+                        <td>${registro.hora}</td>
+                    `;
+            tablaRegistros.appendChild(fila);
+          });
+
+          totalEstudiantes.textContent = `Total de estudiantes: ${filtrados.length}`;
+        }
+      }
+
+      function filtrarPorRango() {
+        const fechaInicioInput = document.getElementById("fechaInicio");
+        const fechaFinInput = document.getElementById("fechaFin");
+        const fechaInicio = fechaInicioInput.value;
+        const fechaFin = fechaFinInput.value;
+
+        if (!fechaInicio || !fechaFin) {
+          showAlert(
+            "Por favor, selecciona ambas fechas para filtrar.",
+            "Fechas Incompletas"
+          );
+          return;
+        }
+
+        const inicio = new Date(fechaInicio);
+        const fin = new Date(fechaFin);
+
+        if (inicio > fin) {
+          showAlert(
+            "La fecha de inicio no puede ser posterior a la fecha de fin.",
+            "Error de Fecha"
+          );
+          // Limpiar campos de fecha si hay un error
+          fechaInicioInput.value = "";
+          fechaFinInput.value = "";
+          cargarRegistros(); // Recargar todos los registros
+          return;
+        }
+        cargarRegistros({ inicio, fin });
+      }
+
+      async function descargarExcel() {
+        let registros =
+          JSON.parse(localStorage.getItem("registrosEstudiantes")) || [];
+        if (registros.length === 0) {
+          showAlert("No hay registros para exportar a Excel.", "Sin Datos");
+          return;
+        }
+
+        // Preparar los datos para Excel
+        const dataToExport = registros.map((r) => ({
+          Fecha: r.fecha,
+          Nombre: r.nombre,
+          Matrícula: r.matricula,
+          Motivo: r.motivo,
+          Hora: r.hora,
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(
+          workbook,
+          worksheet,
+          "Registros_Estudiantes"
+        );
+
+        try {
+          XLSX.writeFile(workbook, "registro_estudiantes.xlsx");
+          showAlert(
+            "Archivo Excel descargado correctamente.",
+            "Descarga Exitosa"
+          );
+        } catch (error) {
+          console.error("Error al descargar el archivo Excel:", error);
+          showAlert(
+            "Hubo un error al descargar el archivo Excel. Por favor, inténtalo de nuevo.",
+            "Error de Descarga"
+          );
+        }
+      }
+
+      async function descargarPDF() {
+        let registros =
+          JSON.parse(localStorage.getItem("registrosEstudiantes")) || [];
+        if (registros.length === 0) {
+          showAlert("No hay registros para exportar a PDF.", "Sin Datos");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const columns = ["Fecha", "Nombre", "Matrícula", "Motivo", "Hora"];
+        const rows = registros.map((r) => [
+          r.fecha,
+          r.nombre,
+          r.matricula,
+          r.motivo,
+          r.hora,
+        ]);
+
+        // Título
+        doc.setFontSize(22);
+        doc.text("Registro de Estudiantes ITSC", 105, 20, null, null, "center");
+
+        // Tabla
+        doc.autoTable({
+          startY: 30, // Inicia la tabla debajo del título
+          head: [columns],
+          body: rows,
+          theme: "striped", // Tema de tabla
+          styles: {
+            fontSize: 10,
+            cellPadding: 3,
+            valign: "middle",
+            halign: "left",
+          },
+          headStyles: {
+            fillColor: [217, 0, 0], // Rojo ITSC (hex #D90000)
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+          },
+          columnStyles: {
+            0: { cellWidth: 25 }, // Fecha
+            1: { cellWidth: 40 }, // Nombre
+            2: { cellWidth: 30 }, // Matrícula
+            3: { cellWidth: 40 }, // Motivo
+            4: { cellWidth: 20 }, // Hora
+          },
+          didDrawPage: function (data) {
+            // Footer con número de página
+            let str = "Página " + doc.internal.getNumberOfPages();
+            doc.setFontSize(10);
+            doc.text(
+              str,
+              data.settings.margin.left,
+              doc.internal.pageSize.height - 10
+            );
+          },
+        });
+
+        try {
+          doc.save("registro_estudiantes.pdf");
+          showAlert(
+            "Archivo PDF descargado correctamente.",
+            "Descarga Exitosa"
+          );
+        } catch (error) {
+          console.error("Error al descargar el archivo PDF:", error);
+          showAlert(
+            "Hubo un error al descargar el archivo PDF. Por favor, inténtalo de nuevo.",
+            "Error de Descarga"
+          );
+        }
+      }
+
+      // Cargar registros al inicio
+      cargarRegistros();
+    </script>
+  </body>
+</html>
